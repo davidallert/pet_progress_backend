@@ -47,8 +47,8 @@ class AuthController extends Controller
 
     // TESTING Remove the user before adding it.
     // DB::table('users')->where('email', $request->input('email'))->delete();
-
     try {
+
       $validated_input = $request->validate([
         'name' => 'required|string|max:255|unique:users',
         'email' => 'required|email|unique:users',
