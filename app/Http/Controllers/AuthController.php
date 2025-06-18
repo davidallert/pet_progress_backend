@@ -20,16 +20,16 @@ class AuthController extends Controller
       ]);
 
       if (!Auth::attempt($validated_input)) {
-            return response()->json(['error' => 'Invalid credentials'], 401);
+            return response()->json(['error' => 'Invalid credentials.'], 401);
       }
 
       $request->session()->regenerate();
 
-      return response()->json(['message' => 'Login successful'], 201);
+      return response()->json(['message' => 'Login successful!'], 201);
     } catch (\Illuminate\Validation\ValidationException $e) {
         return response()->json(['error' => $e->errors()], 422);
     } catch (\Exception $e) {
-        return response()->json(['error' => 'Login failed', 'details' => $e->getMessage()], 500);
+        return response()->json(['error' => 'Login failed.', 'details' => $e->getMessage()], 500);
     }
   }
 
@@ -39,7 +39,7 @@ class AuthController extends Controller
     $request->session()->invalidate();
     $request->session()->regenerateToken();
 
-    return response()->json(['message' => 'Logged out']);
+    return response()->json(['message' => 'Logged out.']);
   }
 
   public function register(Request $request): JsonResponse
