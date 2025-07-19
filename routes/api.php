@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\UserController;
 
 // The router allows you to register routes that respond to any HTTP verb:
 // Route::get($uri, $callback);
@@ -26,9 +27,10 @@ Route::get('/data', function () {
     return $data;
 });
 
-
+// Public POST.
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/register', [AuthController::class, 'register']);
 
+// Protected POST.
 Route::middleware(['auth:sanctum'])->post('/add-pet-to-user', [PetController::class, 'add_pet_to_user']);
