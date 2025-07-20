@@ -41,9 +41,9 @@ class PetController extends Controller
         // Using Mass assignment. Can be risky if not $fillable in the Pet model exists.
         Pet::create([
           'user_id' => $validated_input['user_id'],
-          'name' => strtolower($validated_input['name']),
-          'species' => strtolower($validated_input['species']),
-          'breed' => strtolower($validated_input['breed']),
+          'name' => ($validated_input['name']),
+          'species' => ($validated_input['species']),
+          'breed' => ($validated_input['breed']),
           'birthday' => $validated_input['birthday'],
         ]);
 
