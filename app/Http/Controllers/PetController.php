@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
+use App\Models\Pet;
 
 class PetController extends Controller
 {
@@ -27,7 +28,18 @@ class PetController extends Controller
           'birthday' => 'required|date',
         ]);
 
-        DB::table('pets')->insert([
+        // Old version with DB builder.
+        // DB::table('pets')->insert([
+        //   'user_id' => $validated_input['user_id'],
+        //   'name' => strtolower($validated_input['name']),
+        //   'species' => strtolower($validated_input['species']),
+        //   'breed' => strtolower($validated_input['breed']),
+        //   'birthday' => $validated_input['birthday'],
+        // ]);
+
+        // New version with Eloquent and Pet model.
+        // Using Mass assignment. Can be risky if not $fillable in the Pet model exists.
+        Pet::create([
           'user_id' => $validated_input['user_id'],
           'name' => strtolower($validated_input['name']),
           'species' => strtolower($validated_input['species']),
