@@ -27,7 +27,8 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/register', [AuthController::class, 'register']);
 
 // Protected POST.
-Route::middleware(['auth:sanctum'])->post('/add-pet-to-user', [PetController::class, 'add_pet_to_user']);
+Route::middleware(['auth:sanctum'])->post('/add/pet', [PetController::class, 'add_pet']);
+Route::middleware(['auth:sanctum'])->post('/remove/pet', [PetController::class, 'remove_pet']);
 
 // Protected GET.
 Route::middleware(['auth:sanctum'])->get('/user', [UserController::class, 'get_user']);

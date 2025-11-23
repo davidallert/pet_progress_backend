@@ -11,9 +11,8 @@ class PetController extends Controller
 {
     /**
      * Adds a pet to the user with the specified user_id.
-     * TODO Need to provide the ID somehow, should not be done by the user.
      */
-    public function add_pet_to_user(Request $request): JsonResponse
+    public function add_pet(Request $request): JsonResponse
     {
 
       // TESTING Remove the user before adding it.
@@ -53,5 +52,22 @@ class PetController extends Controller
       } catch (\Exception $e) {
           return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
       }
+    }
+
+    public function remove_pet(Request $request): JsonResponse
+    {
+      try {
+        $validated_input = $request->validate([
+          'pet_id' => 'required|integer',
+        ]);
+
+        Pet::destroy($validated_input['pet_id']);
+
+        return response()->json(['message' => 'Pet removed successfully'], 201);
+      } catch (\Illuminate\Validation\ValidationException $e) {
+          return response()->json(['error' => $e->errors()], 422);
+      } catch (\Exception $e) {
+          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+      } 
     }
 }
