@@ -27,13 +27,14 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/register', [AuthController::class, 'register']);
 
 // Protected POST.
-Route::middleware(['auth:sanctum'])->post('/add/pet', [PetController::class, 'add_pet']);
-Route::middleware(['auth:sanctum'])->post('/remove/pet', [PetController::class, 'remove_pet']);
+Route::middleware(['auth:sanctum'])->post('/add/pet', [PetController::class, 'addPet']);
+Route::middleware(['auth:sanctum'])->post('/remove/pet', [PetController::class, 'removePet']);
+Route::middleware(['auth:sanctum'])->post('/upsert/pet', [PetController::class, 'upsertPets']);
 
 // Protected GET.
-Route::middleware(['auth:sanctum'])->get('/user', [UserController::class, 'get_user']);
-Route::middleware(['auth:sanctum'])->get('/user/pets', [UserController::class, 'get_pets']);
-Route::middleware(['auth:sanctum'])->get('/user/data', [UserController::class, 'get_all_user_data']);
+Route::middleware(['auth:sanctum'])->get('/user', [UserController::class, 'getUser']);
+Route::middleware(['auth:sanctum'])->get('/user/pets', [UserController::class, 'getPets']);
+Route::middleware(['auth:sanctum'])->get('/user/data', [UserController::class, 'getAllUserData']);
 
 // Prev.
 // Route::get('/user', function (Request $request) {

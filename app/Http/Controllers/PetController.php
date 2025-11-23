@@ -12,14 +12,10 @@ class PetController extends Controller
     /**
      * Adds a pet to the user with the specified user_id.
      */
-    public function add_pet(Request $request): JsonResponse
+    public function addPet(Request $request): JsonResponse
     {
-
-      // TESTING Remove the user before adding it.
-      // DB::table('users')->where('email', $request->input('email'))->delete();
-
       try {
-        $validated_input = $request->validate([
+        $validatedInput = $request->validate([
           'user_id' => 'required|integer',
           'name' => 'required|string|max:255',
           'species' => 'required|string|max:255',
@@ -39,14 +35,14 @@ class PetController extends Controller
         // New version with Eloquent and Pet model.
         // Using Mass assignment. Can be risky if not $fillable in the Pet model exists.
         Pet::create([
-          'user_id' => $validated_input['user_id'],
-          'name' => ($validated_input['name']),
-          'species' => ($validated_input['species']),
-          'breed' => ($validated_input['breed']),
-          'birthday' => $validated_input['birthday'],
+          'user_id' => $validatedInput['user_id'],
+          'name' => ($validatedInput['name']),
+          'species' => ($validatedInput['species']),
+          'breed' => ($validatedInput['breed']),
+          'birthday' => $validatedInput['birthday'],
         ]);
 
-        return response()->json(['message' => 'Pet added successfully'], 201);
+        return response()->json(['message' => 'Pet was added.'], 201);
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
@@ -54,20 +50,46 @@ class PetController extends Controller
       }
     }
 
-    public function remove_pet(Request $request): JsonResponse
+    public function removePet(Request $request): JsonResponse
     {
       try {
-        $validated_input = $request->validate([
-          'pet_id' => 'required|integer',
+        $validatedInput = $request->validate([
+          'id' => 'required|integer',
         ]);
 
-        Pet::destroy($validated_input['pet_id']);
+        Pet::destroy($validatedInput['id']);
 
-        return response()->json(['message' => 'Pet removed successfully'], 201);
+        return response()->json(['message' => 'Pet was removed.'], 201);
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
           return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
       } 
+    }
+
+    public function upsertPets(Request $request): JsonResponse
+    {
+      try {
+        $validatedInput = $request->validate([
+          'pets' => 'required|array',
+          'pets.*.id' => 'required|integer',
+          'pets.*.user_id' => 'required|integer',
+          'pets.*.name' => 'required|string|max:255',
+          'pets.*.species' => 'required|string|max:255',
+          'pets.*.breed' => 'string|max:255',
+          'pets.*.birthday' => 'required|date',
+        ]);
+
+        // 'pets.*.birthday' => 'required|date' translates to:
+        // "For the array named pets, go through every single object inside it, and for each one, validate that its birthday key exists and contains a valid date."
+
+        Pet::upsert($validatedInput['pets'], uniqueBy: ['id'], update: ['name', 'species', 'breed', 'birthday']);
+
+        return response()->json(['message' => 'Pets were updated.'], 201);
+      } catch (\Illuminate\Validation\ValidationException $e) {
+          return response()->json(['error' => $e->errors()], 422);
+      } catch (\Exception $e) {
+          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+      }
     }
 }

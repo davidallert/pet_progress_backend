@@ -7,17 +7,17 @@ use App\Models\Pet;
 
 class UserController extends Controller
 {
-    public function get_pets()
+    public function getPets()
     {
       $user = auth()->user();
       return response()->json($user->pets);
     }
-    public function get_user()
+    public function getUser()
     {
       $user = auth()->user();
       return response()->json($user);
     }
-    public function get_all_user_data()
+    public function getAllUserData()
     {
       $user = auth()->user();
       $pets = $user->pets;
