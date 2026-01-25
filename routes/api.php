@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\UserController;
 
 // The router allows you to register routes that respond to any HTTP verb:
@@ -27,9 +28,14 @@ Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/register', [AuthController::class, 'register']);
 
 // Protected POST.
+
+// Pet Class.
 Route::middleware(['auth:sanctum'])->post('/add/pet', [PetController::class, 'addPet']);
 Route::middleware(['auth:sanctum'])->post('/remove/pet', [PetController::class, 'removePet']);
 Route::middleware(['auth:sanctum'])->post('/upsert/pet', [PetController::class, 'upsertPets']);
+
+// Event Class.
+Route::middleware(['auth:sanctum'])->post('/add/event', [EventController::class, 'addEvent']);
 
 // Protected GET.
 Route::middleware(['auth:sanctum'])->get('/user', [UserController::class, 'getUser']);

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use App\Models\Event;
+// use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
 {
@@ -19,17 +20,22 @@ class EventController extends Controller
           'pet_id' => 'required|integer',
           'title' => 'required|string|max:255',
           'description' => 'nullable|string|max:1000',
-          'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+          'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
           'type' => 'nullable|string|max:255',
           'date' => 'nullable|date',
         ]);
 
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+          $imagePath = $request->file('image')->store('images', 'public');
+        }
+
         Event::create([
           'pet_id' => $validatedInput['pet_id'],
-          'title' => ($validatedInput['title']),
-          'description' => ($validatedInput['description']),
-          'image' => ($validatedInput['image']),
-          'type' => ($validatedInput['type']),
+          'title' => $validatedInput['title'],
+          'description' => $validatedInput['description'],
+          'image_path' => $imagePath,
+          'type' => $validatedInput['type'],
           'date' => $validatedInput['date'],
         ]);
 

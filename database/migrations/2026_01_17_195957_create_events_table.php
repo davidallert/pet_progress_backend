@@ -15,10 +15,10 @@ return new class extends Migration
             $table->id();
             $table->foreignId('pet_id')->constrained()->onDelete('cascade');
             $table->string('title');
-            $table->string('description');
-            $table->image('image');
-            $table->string('type');
-            $table->date('date');
+            $table->string('description')->nullable();
+            $table->string('image_path')->nullable();
+            $table->string('type')->nullable();
+            $table->date('date')->nullable();
             $table->timestamps();
         });
     }

@@ -10,7 +10,7 @@ class Event extends Model
       'pet_id',
       'title',
       'description',
-      'image',
+      'image_path',
       'type',
       'date'
     ];

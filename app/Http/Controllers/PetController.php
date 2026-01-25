@@ -33,12 +33,12 @@ class PetController extends Controller
         // ]);
 
         // New version with Eloquent and Pet model.
-        // Using Mass assignment. Can be risky if not $fillable in the Pet model exists.
+        // Using Mass assignment. Can be risky if $fillable in the Pet model doesn't exist.
         Pet::create([
           'user_id' => $validatedInput['user_id'],
-          'name' => ($validatedInput['name']),
-          'species' => ($validatedInput['species']),
-          'breed' => ($validatedInput['breed']),
+          'name' => $validatedInput['name'],
+          'species' => $validatedInput['species'],
+          'breed' => $validatedInput['breed'],
           'birthday' => $validatedInput['birthday'],
         ]);
 
