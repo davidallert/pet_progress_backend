@@ -23,15 +23,6 @@ class PetController extends Controller
           'birthday' => 'required|date',
         ]);
 
-        // Old version with DB builder.
-        // DB::table('pets')->insert([
-        //   'user_id' => $validated_input['user_id'],
-        //   'name' => strtolower($validated_input['name']),
-        //   'species' => strtolower($validated_input['species']),
-        //   'breed' => strtolower($validated_input['breed']),
-        //   'birthday' => $validated_input['birthday'],
-        // ]);
-
         // New version with Eloquent and Pet model.
         // Using Mass assignment. Can be risky if $fillable in the Pet model doesn't exist.
         Pet::create([

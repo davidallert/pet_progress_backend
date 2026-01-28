@@ -63,4 +63,20 @@ class EventController extends Controller
           return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
       } 
     }
+
+    public function getEvents(Request $request): JsonResponse
+    {
+      $validatedInput = $request->validate([
+        'id' => 'required|integer',
+      ]);
+
+      try {
+        $events = Event::where('pet_id', $validatedInput['id'])->get();
+        return response()->json($events, 200);
+      } catch (\Illuminate\Validation\ValidationException $e) {
+          return response()->json(['error' => $e->errors()], 422);
+      } catch (\Exception $e) {
+          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+      }
+    }
 }
