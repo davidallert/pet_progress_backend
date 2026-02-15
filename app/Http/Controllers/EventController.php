@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use App\Models\Event;
+use App\Http\Resources\EventResource;
 // use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
@@ -71,8 +72,8 @@ class EventController extends Controller
       ]);
 
       try {
-        $events = Event::where('pet_id', $validatedInput['id'])->get();
-        return response()->json($events, 200);
+        $events = Event::where('pet_id', $validatedInput['id'])->orderBy('date', 'asc')->get();
+        return response()->json(EventResource::collection($events), 200); // Using EventResource to change keys from snake_case to camelCase.
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
