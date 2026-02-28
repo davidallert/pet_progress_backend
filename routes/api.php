@@ -27,12 +27,11 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout']);
 Route::post('/register', [AuthController::class, 'register']);
 
-// Protected POST.
-
 // Pet Class.
 Route::middleware(['auth:sanctum'])->post('/add/pet', [PetController::class, 'addPet']);
 Route::middleware(['auth:sanctum'])->post('/remove/pet', [PetController::class, 'removePet']);
 Route::middleware(['auth:sanctum'])->post('/upsert/pet', [PetController::class, 'upsertPets']);
+Route::get('/pet/get', [PetController::class, 'getPet']);
 
 // Event Class.
 Route::middleware(['auth:sanctum'])->post('/event/add', [EventController::class, 'addEvent']);

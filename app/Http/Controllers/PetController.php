@@ -9,6 +9,22 @@ use App\Models\Pet;
 
 class PetController extends Controller
 {
+    public function getPet(Request $request): JsonResponse
+    {
+      $validatedInput = $request->validate([
+        'id' => 'required|integer',
+      ]);
+
+      try {
+        $pet = Pet::where('id', $validatedInput['id'])->first();
+        return response()->json($pet, 200);
+      } catch (\Illuminate\Validation\ValidationException $e) {
+          return response()->json(['error' => $e->errors()], 422);
+      } catch (\Exception $e) {
+          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+      }
+    }
+
     /**
      * Adds a pet to the user with the specified user_id.
      */

@@ -7,6 +7,7 @@ use App\Models\User;
 class Pet extends Model
 {
     protected $fillable = [
+      'id',
       'user_id',
       'name',
       'species',
