@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pet;
+use App\Http\Resources\PetResource;
 
 class UserController extends Controller
 {
@@ -21,6 +22,7 @@ class UserController extends Controller
     {
       $user = auth()->user();
       $pets = $user->pets;
+      $pets = PetResource::collection($pets);
       return response()->json([
         'user' => $user,
         'pets' => $pets,

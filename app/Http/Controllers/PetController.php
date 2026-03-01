@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use App\Models\Pet;
+// use App\Http\Resources\PetResource;
 
 class PetController extends Controller
 {
@@ -18,6 +19,7 @@ class PetController extends Controller
       try {
         $pet = Pet::where('id', $validatedInput['id'])->first();
         return response()->json($pet, 200);
+        // return response()->json(PetResource::collection($pet), 200);
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
@@ -34,16 +36,23 @@ class PetController extends Controller
         $validatedInput = $request->validate([
           'user_id' => 'required|integer',
           'name' => 'required|string|max:255',
+          'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
           'species' => 'required|string|max:255',
           'breed' => 'string|max:255',
           'birthday' => 'required|date',
         ]);
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+          $imagePath = $request->file('image')->store('images', 'public');
+        }
 
         // New version with Eloquent and Pet model.
         // Using Mass assignment. Can be risky if $fillable in the Pet model doesn't exist.
         Pet::create([
           'user_id' => $validatedInput['user_id'],
           'name' => $validatedInput['name'],
+          'image_path' => $imagePath,
           'species' => $validatedInput['species'],
           'breed' => $validatedInput['breed'],
           'birthday' => $validatedInput['birthday'],

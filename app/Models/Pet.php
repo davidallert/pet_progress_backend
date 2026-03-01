@@ -10,6 +10,7 @@ class Pet extends Model
       'id',
       'user_id',
       'name',
+      'image_path',
       'species',
       'breed',
       'birthday'
