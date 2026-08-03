@@ -26,7 +26,9 @@ class PetResource extends JsonResource
             'species' => $this->species,
             'breed' => $this->breed,
             'birthday' => $this->birthday,
-            // Exclude fields like created_at, updated_at if you don't need them
+            // Exclude fields like created_at, updated_at if you don't need them.
+
+            'events' => EventResource::collection($this->whenLoaded('events'))
         ];
     }
 }

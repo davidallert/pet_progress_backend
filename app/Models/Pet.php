@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use App\Models\User;
+use App\Models\Event;
 
 class Pet extends Model
 {
@@ -19,5 +20,10 @@ class Pet extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function events()
+    {
+        return $this->hasMany(Event::class);
     }
 }

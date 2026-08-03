@@ -20,13 +20,12 @@ class EventResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'petId' => $this->pet_id, // snake_case to camelCase
+            'petId' => $this->pet_id,
             'title' => $this->title,
             'description' => $this->description,
-            'imagePath' => $imageUrl, // snake_case to camelCase
+            'imagePath' => $imageUrl,
             'type' => $this->type,
             'date' => $this->date,
-            // Exclude fields like created_at, updated_at if you don't need them
         ];
     }
 }
