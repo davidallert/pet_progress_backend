@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://localhost:3000'],
+    'allowed_origins' => ['http://localhost:3000', 'https://www.petfolio.se', 'https://www.petfolio.online'],
 
     'allowed_origins_patterns' => [],
 
