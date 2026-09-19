@@ -20,8 +20,8 @@ class EventController extends Controller
         $validatedInput = $request->validate([
           'pet_id' => 'required|integer',
           'title' => 'required|string|max:255',
-          'description' => 'nullable|string|max:1000',
-          'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
+          'description' => 'nullable|string|max:10000',
+          'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
           'type' => 'nullable|string|max:255',
           'date' => 'nullable|date',
         ]);
