@@ -30,7 +30,7 @@ class UserController extends Controller
 
       $user->load([
         'pets.events' => function ($query) use ($eventLimit) {
-          $query->orderByDesc('created_at')->limit($eventLimit);
+          $query->orderByDesc('date')->limit($eventLimit);
         }
       ]);
 
