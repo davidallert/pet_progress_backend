@@ -26,11 +26,11 @@ class UserController extends Controller
 
       $eventLimit = $request->query('eventLimit');
 
-      $user->load('pets.events');
-
       $user->load([
         'pets.events' => function ($query) use ($eventLimit) {
-          $query->orderByDesc('date')->limit($eventLimit);
+          $query->orderByDesc('date');
+          
+          if ($eventLimit) $query->limit($eventLimit);
         }
       ]);
 
