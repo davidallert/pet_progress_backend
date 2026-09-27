@@ -80,4 +80,26 @@ class EventController extends Controller
           return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
       }
     }
+
+    public function upsertEvent(Request $request): JsonResponse
+    {
+      try {
+        $validatedInput = $request->validate([
+          'pet_id' => 'required|integer',
+          'title' => 'required|string|max:255',
+          'description' => 'nullable|string|max:10000',
+          'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
+          'type' => 'nullable|string|max:255',
+          'date' => 'nullable|date',
+        ]);
+
+        Event::upsert($validatedInput, );
+
+        return response()->json(['message' => 'Pets were updated.'], 201);
+      } catch (\Illuminate\Validation\ValidationException $e) {
+          return response()->json(['error' => $e->errors()], 422);
+      } catch (\Exception $e) {
+          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+      }
+    }
 }
