@@ -1,0 +1,8 @@
+[phases.setup]
+nixpacksImages = ['...'] # Keep default image configuration.
+
+[phases.build]
+cmds = [
+  '...,', # Normal build commands (composer install, etc.)
+  'php artisan storage:link || true'
+]
