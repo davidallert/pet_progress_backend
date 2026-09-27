@@ -42,6 +42,10 @@ class PetController extends Controller
           'birthday' => 'required|date',
         ]);
 
+        if (!Storage::disk('public')->exists('images')) {
+            Storage::disk('public')->makeDirectory('images');
+        }
+
         $imagePath = null;
         if ($request->hasFile('image')) {
           $imagePath = $request->file('image')->store('images', 'public');
