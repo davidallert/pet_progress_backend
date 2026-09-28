@@ -36,6 +36,7 @@ Route::get('/pet/get', [PetController::class, 'getPet']);
 // Event Class.
 Route::middleware(['auth:sanctum'])->post('/event/add', [EventController::class, 'addEvent']);
 Route::middleware(['auth:sanctum'])->post('/event/remove', [EventController::class, 'removeEvent']);
+Route::middleware(['auth:sanctum'])->post('/event/upsert', [EventController::class, 'upsertEvent']);
 Route::get('/event/get', [EventController::class, 'getEvents']);
 
 // Protected GET.

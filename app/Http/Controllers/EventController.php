@@ -7,6 +7,8 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use App\Models\Event;
 use App\Http\Resources\EventResource;
+use Illuminate\Support\Facades\Storage;
+
 // use Illuminate\Support\Facades\Log;
 
 class EventController extends Controller
@@ -55,7 +57,11 @@ class EventController extends Controller
           'id' => 'required|integer',
         ]);
 
+        $imagePath = Event::where('id', $validatedInput['id'])->value('image_path');
+
         Event::destroy($validatedInput['id']);
+
+        if ($imagePath) Storage::disk('public')->delete($imagePath);
 
         return response()->json(['message' => 'Event was removed.'], 201);
       } catch (\Illuminate\Validation\ValidationException $e) {
@@ -83,8 +89,11 @@ class EventController extends Controller
 
     public function upsertEvent(Request $request): JsonResponse
     {
+      $imagePath = null;
+      
       try {
         $validatedInput = $request->validate([
+          'id' => 'required|integer',
           'pet_id' => 'required|integer',
           'title' => 'required|string|max:255',
           'description' => 'nullable|string|max:10000',
@@ -93,13 +102,48 @@ class EventController extends Controller
           'date' => 'nullable|date',
         ]);
 
-        Event::upsert($validatedInput, );
+        // Create new array to filter which fields should be included.
+        $upsert = [
+          'id' => $validatedInput['id'],
+          'pet_id' => $validatedInput['pet_id'],
+          'title' => $validatedInput['title'],
+          'description' => $validatedInput['description'] ?? null,
+          'type' => $validatedInput['type'] ?? null,
+          'date' => $validatedInput['date'] ?? null,
+        ];
 
-        return response()->json(['message' => 'Pets were updated.'], 201);
+        $update = ['title', 'description', 'type', 'date'];
+
+        $prevPath = null;
+
+        if ($request->hasFile('image')) {
+          $prevPath = Event::where('id', $validatedInput['id'])->value('image_path');
+
+          $imagePath = $request->file('image')->store('images', 'public');
+
+          $upsert['image_path'] = $imagePath;
+
+          $update[] = 'image_path'; // Only update the path when a new one is included in the request.
+        }
+
+        Event::upsert($upsert, uniqueBy: ['id'], update: $update);
+
+         // Delete previous image.
+         if ($prevPath) {
+          Storage::disk('public')->delete($prevPath);
+         }
+
+        return response()->json(['message' => 'Event saved.'], 200);
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
-          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+          // Remove the image from the disk if an error occurs to avoid bloat.
+          if ($imagePath) Storage::disk('public')->delete($imagePath);
+
+          report($e); // Log the error.
+
+          return response()->json(['error' => 'Something went wrong'], 500);
+          // return response()->json(['error' => $e->getMessage()], 500); // For debugging. May include sensitive information.
       }
     }
 }
