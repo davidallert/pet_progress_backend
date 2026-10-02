@@ -166,7 +166,7 @@ To deploy your own copy:
 
 ## Related Repositories
 
-- **Petfolio Frontend:** [davidallert/pet_progress_frontend](https://github.com/davidallert/pet_progress_frontend) ([live demo](https://pet-progress-frontend.vercel.app))
+- **Petfolio Frontend:** [davidallert/pet_progress_frontend](https://github.com/davidallert/pet_progress_frontend) ([live demo](https://www.petfolio.se/))
 
 ## Author
 
