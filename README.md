@@ -118,23 +118,6 @@ The API is organized around three resources:
 - **Pets:** belong to a user
 - **Events:** belong to a pet (vaccinations, tricks, trips, ...)
 
-Protected endpoints require an authenticated user via Laravel Sanctum.
-
-  POST       api/add/pet ........................................................................ PetController@addPet
-  POST       api/event/add .................................................................. EventController@addEvent
-  GET|HEAD   api/event/get ................................................................. EventController@getEvents
-  POST       api/event/remove ............................................................ EventController@removeEvent
-  POST       api/event/upsert ............................................................ EventController@upsertEvent
-  POST       api/login .......................................................................... AuthController@login
-  POST       api/logout ........................................................................ AuthController@logout
-  GET|HEAD   api/pet/get ........................................................................ PetController@getPet
-  POST       api/register .................................................................... AuthController@register
-  POST       api/remove/pet .................................................................. PetController@removePet
-  POST       api/upsert/pet ................................................................. PetController@upsertPets
-  GET|HEAD   api/user ......................................................................... UserController@getUser
-  GET|HEAD   api/user/data ............................................................. UserController@getAllUserData
-  GET|HEAD   api/user/pets .................................................................... UserController@getPets
-
 ## Useful Commands
 
 | Command | Description |
