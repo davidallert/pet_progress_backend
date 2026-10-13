@@ -40,7 +40,7 @@ class PetController extends Controller
           'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
           'species' => 'required|string|max:255',
           'breed' => 'string|max:255',
-          'birthday' => 'required|date',
+          'birthday' => 'nullable|date',
         ]);
 
         if (!Storage::disk('public')->exists('images')) {
@@ -98,7 +98,7 @@ class PetController extends Controller
           'pets.*.name' => 'required|string|max:255',
           'pets.*.species' => 'required|string|max:255',
           'pets.*.breed' => 'string|max:255',
-          'pets.*.birthday' => 'required|date',
+          'pets.*.birthday' => 'nullable|date',
         ]);
 
         // 'pets.*.birthday' => 'required|date' translates to:
