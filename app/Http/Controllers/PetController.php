@@ -37,7 +37,7 @@ class PetController extends Controller
         $validatedInput = $request->validate([
           'user_id' => 'required|integer',
           'name' => 'required|string|max:255',
-          'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
+          'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
           'species' => 'required|string|max:255',
           'breed' => 'string|max:255',
           'birthday' => 'required|date',
