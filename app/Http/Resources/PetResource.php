@@ -15,19 +15,21 @@ class PetResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-
         $imageUrl = $this->image_path ? asset(Storage::url($this->image_path)) : null;
 
+        // Exclude fields like created_at, updated_at if they're not needed.
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
             'name' => $this->name,
             'imagePath' => $imageUrl,
             'species_id' => $this->species_id,
+            'species' => $this->whenLoaded('species', fn ($species) => [
+                'name' => $species->name,
+                'icon' => $species->icon,
+            ]),
             'breed' => $this->breed,
             'birthday' => $this->birthday,
-            // Exclude fields like created_at, updated_at if you don't need them.
-
             'events' => EventResource::collection($this->whenLoaded('events'))
         ];
     }
