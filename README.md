@@ -13,14 +13,14 @@ This repository contains the **backend**. The web client lives in a separate rep
 
 ## Tech Stack
 
-| Area | Technology |
-| --- | --- |
-| Framework | [Laravel 12](https://laravel.com/) |
-| Language | [PHP 8.2+](https://www.php.net/) |
-| Authentication | [Laravel Sanctum](https://laravel.com/docs/sanctum) |
-| Database | [MySQL](https://www.mysql.com/) |
-| Build tooling | [Vite](https://vite.dev/) (Laravel default) |
-| Hosting | [Railway](https://railway.com/) (built with [Nixpacks](https://nixpacks.com/)) |
+| Area           | Technology                                                                   |
+| -------------- | ---------------------------------------------------------------------------- |
+| Framework      | [Laravel 12](https://laravel.com/)                                            |
+| Language       | [PHP 8.2+](https://www.php.net/)                                              |
+| Authentication | [Laravel Sanctum](https://laravel.com/docs/sanctum)                           |
+| Database       | [MySQL](https://www.mysql.com/)                                               |
+| Build tooling  | [Vite](https://vite.dev/) (Laravel default)                                   |
+| Hosting        | [Railway](https://railway.com/) (built with [Nixpacks](https://nixpacks.com/)) |
 
 ## Getting Started
 
@@ -39,20 +39,17 @@ This repository contains the **backend**. The web client lives in a separate rep
    git clone https://github.com/davidallert/pet_progress_backend.git
    cd pet_progress_backend
    ```
-
 2. **Install dependencies**
 
    ```bash
    composer install
    ```
-
 3. **Set up your environment file**
 
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
-
 4. **Configure the database**
 
    Create an empty MySQL database, for example:
@@ -71,14 +68,17 @@ This repository contains the **backend**. The web client lives in a separate rep
    DB_USERNAME=your_mysql_user
    DB_PASSWORD=your_mysql_password
    ```
-
 5. **Run the migrations**
 
    ```bash
    php artisan migrate
    ```
+6. **Seed the database**
 
-6. **Start the development server**
+   ```bash
+   php artisan db:seed
+   ```
+7. **Start the development server**
 
    ```bash
    php artisan serve
@@ -98,15 +98,15 @@ Point the [Petfolio frontend](https://github.com/davidallert/pet_progress_fronte
 
 Configuration lives in `.env` (copied from `.env.example`). The most important variables:
 
-| Variable | Description |
-| --- | --- |
-| `APP_ENV` | Application environment (`local`, `production`) |
-| `APP_KEY` | Encryption key, generated with `php artisan key:generate` |
-| `APP_DEBUG` | Set to `false` in production |
-| `APP_URL` | Public URL of the API |
-| `DB_CONNECTION` | Database driver, `mysql` for this project |
-| `DB_HOST`, `DB_PORT` | Address of the MySQL server |
-| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | MySQL database name and credentials |
+| Variable                                          | Description                                                 |
+| ------------------------------------------------- | ----------------------------------------------------------- |
+| `APP_ENV`                                       | Application environment (`local`, `production`)         |
+| `APP_KEY`                                       | Encryption key, generated with `php artisan key:generate` |
+| `APP_DEBUG`                                     | Set to `false` in production                              |
+| `APP_URL`                                       | Public URL of the API                                       |
+| `DB_CONNECTION`                                 | Database driver, `mysql` for this project                 |
+| `DB_HOST`, `DB_PORT`                          | Address of the MySQL server                                 |
+| `DB_DATABASE`, `DB_USERNAME`, `DB_PASSWORD` | MySQL database name and credentials                         |
 
 <!-- TODO: add any project-specific variables (e.g. frontend URL, allowed origins). -->
 
@@ -120,15 +120,15 @@ The API is organized around three resources:
 
 ## Useful Commands
 
-| Command | Description |
-| --- | --- |
-| `php artisan serve` | Start the local development server |
-| `composer dev` | Run server, queue, logs and Vite together |
-| `php artisan migrate` | Run database migrations |
+| Command                       | Description                                                     |
+| ----------------------------- | --------------------------------------------------------------- |
+| `php artisan serve`         | Start the local development server                              |
+| `composer dev`              | Run server, queue, logs and Vite together                       |
+| `php artisan migrate`       | Run database migrations                                         |
 | `php artisan migrate:fresh` | Drop all tables and re-run migrations (**destroys data**) |
-| `php artisan route:list` | List all registered routes |
-| `composer test` | Run the test suite |
-| `./vendor/bin/pint` | Format code with Laravel Pint |
+| `php artisan route:list`    | List all registered routes                                      |
+| `composer test`             | Run the test suite                                              |
+| `./vendor/bin/pint`         | Format code with Laravel Pint                                   |
 
 ## Deployment
 
@@ -156,8 +156,12 @@ To deploy your own copy:
    ```bash
    php artisan migrate --force
    ```
+6. Seed the default event categories:
 
-6. Make sure your production frontend URL is allowed in the CORS configuration.
+   ```bash
+   php artisan db:seed --class=EventTypeSeeder --force
+   ```
+7. Make sure your production frontend URL is allowed in the CORS configuration.
 
 ## Roadmap
 

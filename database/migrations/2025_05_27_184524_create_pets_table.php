@@ -17,8 +17,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('image_path')->nullable();
             $table->date('birthday');
-            $table->string('species');
-            $table->string('breed');
+            $table->foreignId('species_id')->constrained()->onDelete('cascade');
+            $table->string('breed')->nullable();
             $table->timestamps();
         });
     }

@@ -38,8 +38,8 @@ class PetController extends Controller
           'user_id' => 'required|integer',
           'name' => 'required|string|max:255',
           'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
-          'species' => 'required|string|max:255',
-          'breed' => 'string|max:255',
+          'species_id' => 'required|integer',
+          'breed' => 'nullable|max:255',
           'birthday' => 'nullable|date',
         ]);
 
@@ -58,7 +58,7 @@ class PetController extends Controller
           'user_id' => $validatedInput['user_id'],
           'name' => $validatedInput['name'],
           'image_path' => $imagePath,
-          'species' => $validatedInput['species'],
+          'species_id' => $validatedInput['species_id'],
           'breed' => $validatedInput['breed'],
           'birthday' => $validatedInput['birthday'],
         ]);
@@ -67,7 +67,8 @@ class PetController extends Controller
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
-          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+          return response()->json(['error' => 'Something went wrong'], 500);
+          // return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
       }
     }
 
@@ -84,7 +85,8 @@ class PetController extends Controller
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
-          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+          return response()->json(['error' => 'Something went wrong'], 500);
+          // return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
       } 
     }
 
@@ -96,21 +98,31 @@ class PetController extends Controller
           'pets.*.id' => 'required|integer',
           'pets.*.user_id' => 'required|integer',
           'pets.*.name' => 'required|string|max:255',
-          'pets.*.species' => 'required|string|max:255',
-          'pets.*.breed' => 'string|max:255',
+          'pets.*.species_id' => 'required|integer',
+          'pets.*.breed' => 'nullable|max:255',
           'pets.*.birthday' => 'nullable|date',
-        ]);
+        ],
+        [],
+        // Custom field names, i.e. "name" is displayed instead of "pet.0.name".
+        [
+          'pets.*.name' => 'name',
+          'pets.*.species_id' => 'species',
+          'pets.*.breed' => 'breed',
+          'pets.*.birthday' => 'birthday',
+        ]
+        );
 
         // 'pets.*.birthday' => 'required|date' translates to:
         // "For the array named pets, go through every single object inside it, and for each one, validate that its birthday key exists and contains a valid date."
 
-        Pet::upsert($validatedInput['pets'], uniqueBy: ['id'], update: ['name', 'species', 'breed', 'birthday']);
+        Pet::upsert($validatedInput['pets'], uniqueBy: ['id'], update: ['name', 'species_id', 'breed', 'birthday']);
 
         return response()->json(['message' => 'Pets were updated.'], 201);
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
-          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+          return response()->json(['error' => 'Something went wrong'], 500);
+          //return response()->json(['error' => $e->getMessage()], 500); // For debugging. May include sensitive information.
       }
     }
 }

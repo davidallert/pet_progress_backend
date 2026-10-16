@@ -4,7 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PetController;
+use App\Http\Controllers\SpeciesController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\EventTypeController;
 use App\Http\Controllers\UserController;
 
 // The router allows you to register routes that respond to any HTTP verb:
@@ -33,11 +35,17 @@ Route::middleware(['auth:sanctum'])->post('/remove/pet', [PetController::class, 
 Route::middleware(['auth:sanctum'])->post('/upsert/pet', [PetController::class, 'upsertPets']);
 Route::get('/pet/get', [PetController::class, 'getPet']);
 
+// Species
+Route::get('/species', [SpeciesController::class, 'getSpecies']);
+
 // Event Class.
 Route::middleware(['auth:sanctum'])->post('/event/add', [EventController::class, 'addEvent']);
 Route::middleware(['auth:sanctum'])->post('/event/remove', [EventController::class, 'removeEvent']);
 Route::middleware(['auth:sanctum'])->post('/event/upsert', [EventController::class, 'upsertEvent']);
 Route::get('/event/get', [EventController::class, 'getEvents']);
+
+// Event Types.
+Route::get('/event/types', [EventTypeController::class, 'getEventTypes']);
 
 // Protected GET.
 Route::middleware(['auth:sanctum'])->get('/user', [UserController::class, 'getUser']);

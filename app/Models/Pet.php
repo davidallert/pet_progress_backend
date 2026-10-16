@@ -12,7 +12,7 @@ class Pet extends Model
       'user_id',
       'name',
       'image_path',
-      'species',
+      'species_id',
       'breed',
       'birthday'
     ];
@@ -25,5 +25,10 @@ class Pet extends Model
     public function events()
     {
         return $this->hasMany(Event::class);
+    }
+
+    public function species()
+    {
+        return $this->belongsTo(Species::class);
     }
 }
