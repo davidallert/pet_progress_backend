@@ -2,6 +2,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\EventCategory;
 use App\Models\Pet;
 
 class Event extends Model
@@ -11,12 +12,17 @@ class Event extends Model
       'title',
       'description',
       'image_path',
-      'type',
+      'category_id',
       'date'
     ];
 
     public function belongsToPet()
     {
         return $this->belongsTo(Pet::class);
+    }
+
+    public function eventCategory()
+    {
+        return $this->belongsTo(EventCategory::class, 'category_id');
     }
 }

@@ -6,7 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PetController;
 use App\Http\Controllers\SpeciesController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\EventTypeController;
+use App\Http\Controllers\EventCategoryController;
 use App\Http\Controllers\UserController;
 
 // The router allows you to register routes that respond to any HTTP verb:
@@ -44,8 +44,8 @@ Route::middleware(['auth:sanctum'])->post('/event/remove', [EventController::cla
 Route::middleware(['auth:sanctum'])->post('/event/upsert', [EventController::class, 'upsertEvent']);
 Route::get('/event/get', [EventController::class, 'getEvents']);
 
-// Event Types.
-Route::get('/event/types', [EventTypeController::class, 'getEventTypes']);
+// Event Categories.
+Route::get('/event/categories', [EventCategoryController::class, 'getEventCategories']);
 
 // Protected GET.
 Route::middleware(['auth:sanctum'])->get('/user', [UserController::class, 'getUser']);

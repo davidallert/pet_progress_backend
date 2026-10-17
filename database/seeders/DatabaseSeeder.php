@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Database\Seeders\EventTypeSeeder;
+use Database\Seeders\EventCategorySeeder;
 use Database\Seeders\SpeciesSeeder;
 
 class DatabaseSeeder extends Seeder
@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
-            EventTypeSeeder::class,
+            EventCategorySeeder::class,
             SpeciesSeeder::class
         ]);
     }

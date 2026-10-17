@@ -61,7 +61,12 @@ class PetController extends Controller
           'species_id' => $validatedInput['species_id'],
           'breed' => $validatedInput['breed'],
           'birthday' => $validatedInput['birthday'],
-        ]);
+        ],
+        [],
+        [
+          'species_id' => 'species',
+        ]
+        );
 
         return response()->json(['message' => 'Pet was added.'], 201);
       } catch (\Illuminate\Validation\ValidationException $e) {

@@ -3,7 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class EventType extends Model
+class EventCategory extends Model
 {
     protected $fillable = [
       'name',

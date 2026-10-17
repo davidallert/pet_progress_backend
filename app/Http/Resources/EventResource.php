@@ -24,8 +24,12 @@ class EventResource extends JsonResource
             'title' => $this->title,
             'description' => $this->description,
             'imagePath' => $imageUrl,
-            'type' => $this->type,
+            'categoryId' => $this->category_id,
             'date' => $this->date,
+            'category' => $this->whenLoaded('eventCategory', fn ($eventCategory) => [
+                'name' => $eventCategory->name,
+                'icon' => $eventCategory->icon,
+            ]),
         ];
     }
 }

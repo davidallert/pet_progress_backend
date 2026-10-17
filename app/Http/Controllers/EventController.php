@@ -24,7 +24,7 @@ class EventController extends Controller
           'title' => 'required|string|max:255',
           'description' => 'nullable|string|max:10000',
           'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
-          'type' => 'nullable|string|max:255',
+          'category_id' => 'nullable|string|max:255',
           'date' => 'nullable|date',
         ]);
 
@@ -38,7 +38,7 @@ class EventController extends Controller
           'title' => $validatedInput['title'],
           'description' => $validatedInput['description'],
           'image_path' => $imagePath,
-          'type' => $validatedInput['type'],
+          'category_id' => $validatedInput['category_id'],
           'date' => $validatedInput['date'],
         ]);
 
@@ -78,7 +78,10 @@ class EventController extends Controller
       ]);
 
       try {
-        $events = Event::where('pet_id', $validatedInput['id'])->orderBy('date', 'asc')->get();
+        $events = Event::with('eventCategory')
+          ->where('pet_id', $validatedInput['id'])
+          ->orderBy('date', 'asc')
+          ->get();
         return response()->json(EventResource::collection($events), 200); // Using EventResource to change keys from snake_case to camelCase.
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
@@ -98,7 +101,7 @@ class EventController extends Controller
           'title' => 'required|string|max:255',
           'description' => 'nullable|string|max:10000',
           'image' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:10240',
-          'type' => 'nullable|string|max:255',
+          'category_id' => 'nullable|string|max:255',
           'date' => 'nullable|date',
         ]);
 
@@ -108,11 +111,11 @@ class EventController extends Controller
           'pet_id' => $validatedInput['pet_id'],
           'title' => $validatedInput['title'],
           'description' => $validatedInput['description'] ?? null,
-          'type' => $validatedInput['type'] ?? null,
+          'category_id' => $validatedInput['category_id'] ?? null,
           'date' => $validatedInput['date'] ?? null,
         ];
 
-        $update = ['title', 'description', 'type', 'date'];
+        $update = ['title', 'description', 'category_id', 'date'];
 
         $prevPath = null;
 

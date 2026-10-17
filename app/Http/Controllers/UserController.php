@@ -32,7 +32,8 @@ class UserController extends Controller
           $query->orderByDesc('date');
           
           if ($eventLimit) $query->limit($eventLimit);
-        }
+        },
+        'pets.events.eventCategory'
       ]);
 
       return response()->json([

@@ -23,7 +23,7 @@ class PetResource extends JsonResource
             'user_id' => $this->user_id,
             'name' => $this->name,
             'imagePath' => $imageUrl,
-            'species_id' => $this->species_id,
+            'speciesId' => $this->species_id,
             'species' => $this->whenLoaded('species', fn ($species) => [
                 'name' => $species->name,
                 'icon' => $species->icon,
