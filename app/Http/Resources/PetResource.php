@@ -20,7 +20,7 @@ class PetResource extends JsonResource
         // Exclude fields like created_at, updated_at if they're not needed.
         return [
             'id' => $this->id,
-            'user_id' => $this->user_id,
+            'userId' => $this->user_id,
             'name' => $this->name,
             'imagePath' => $imageUrl,
             'speciesId' => $this->species_id,

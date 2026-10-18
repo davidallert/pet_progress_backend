@@ -20,7 +20,10 @@ return Application::configure(basePath: dirname(__DIR__))
       ]); // auth:sanctum is used in the route, which connects it to this middleware.
       $middleware->appendToGroup('api', [
         \Illuminate\Session\Middleware\StartSession::class,
-    ]);
+      ]);
+      $middleware->api(prepend: [
+          \App\Http\Middleware\ConvertCamelToSnake::class,
+      ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //

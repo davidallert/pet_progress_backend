@@ -17,7 +17,7 @@ class SpeciesSeeder extends Seeder
             'Dog' => 'shield-dog',
             'Cat' => 'shield-cat',
             'Bird' => 'dove',
-            'Fish' => 'fish-fins',
+            'Fish' => 'fish',
             'Horse' => 'horse-head',
             'Cow' => 'cow',
             'Spider' => 'spider',
