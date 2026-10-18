@@ -24,16 +24,15 @@ class UserController extends Controller
     {
       $user = auth()->user();
 
-      $eventLimit = $request->query('eventLimit');
+      $eventLimit = $request->query('event_limit');
 
       $user->load([
         'pets.species',
         'pets.events' => function ($query) use ($eventLimit) {
-          $query->orderByDesc('date');
+          $query->with('eventCategory')->orderByDesc('date');
           
           if ($eventLimit) $query->limit($eventLimit);
         },
-        'pets.events.eventCategory'
       ]);
 
       return response()->json([

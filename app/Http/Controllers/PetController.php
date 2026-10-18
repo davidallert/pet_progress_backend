@@ -19,12 +19,46 @@ class PetController extends Controller
 
       try {
         $pet = Pet::where('id', $validatedInput['id'])->first();
+
         return response()->json($pet, 200);
-        // return response()->json(PetResource::collection($pet), 200);
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
-          return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+          return response()->json(['error' => 'Something went wrong'], 500);
+          // return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+      }
+    }
+
+    public function updateImage(Request $request): JsonResponse 
+    {
+      try {
+        $validatedInput = $request->validate([
+          'id' => 'required|integer',
+          'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
+        ]);
+
+        if (!Storage::disk('public')->exists('images')) {
+          Storage::disk('public')->makeDirectory('images');
+        }
+
+        $prevPath = Pet::where('id', $validatedInput['id'])->value('image_path');
+
+        $imagePath = $request->file('image')->store('images', 'public');
+
+        Pet::where('id', $validatedInput['id'])->update(['image_path' => $imagePath]);
+
+        if ($prevPath) {
+          Storage::disk('public')->delete($prevPath);
+        }
+
+        $imageUrl = asset(Storage::url($imagePath));
+
+        return response()->json(['message' => 'Image was updated.', 'imageUrl' => $imageUrl], 201);
+      } catch (\Illuminate\Validation\ValidationException $e) {
+          return response()->json(['error' => $e->errors()], 422);
+      } catch (\Exception $e) {
+          return response()->json(['error' => 'Something went wrong'], 500);
+          // return response()->json(['error' => ['Something went wrong], 'details' => $e->getMessage()], 500);
       }
     }
 
@@ -84,7 +118,13 @@ class PetController extends Controller
           'id' => 'required|integer',
         ]);
 
+        $imagePath = Pet::where('id', $validatedInput['id'])->value('image_path');
+
         Pet::destroy($validatedInput['id']);
+
+        if ($imagePath) {
+          Storage::disk('public')->delete($imagePath);
+        }
 
         return response()->json(['message' => 'Pet was removed.'], 201);
       } catch (\Illuminate\Validation\ValidationException $e) {

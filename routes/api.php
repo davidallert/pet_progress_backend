@@ -33,6 +33,7 @@ Route::post('/register', [AuthController::class, 'register']);
 Route::middleware(['auth:sanctum'])->post('/add/pet', [PetController::class, 'addPet']);
 Route::middleware(['auth:sanctum'])->post('/remove/pet', [PetController::class, 'removePet']);
 Route::middleware(['auth:sanctum'])->post('/upsert/pet', [PetController::class, 'upsertPets']);
+Route::middleware(['auth:sanctum'])->post('/update/pet/image', [PetController::class, 'updateImage']);
 Route::get('/pet/get', [PetController::class, 'getPet']);
 
 // Species
@@ -42,7 +43,7 @@ Route::get('/species', [SpeciesController::class, 'getSpecies']);
 Route::middleware(['auth:sanctum'])->post('/event/add', [EventController::class, 'addEvent']);
 Route::middleware(['auth:sanctum'])->post('/event/remove', [EventController::class, 'removeEvent']);
 Route::middleware(['auth:sanctum'])->post('/event/upsert', [EventController::class, 'upsertEvent']);
-Route::get('/event/get', [EventController::class, 'getEvents']);
+Route::middleware(['auth:sanctum'])->get('/event/get', [EventController::class, 'getEvents']);
 
 // Event Categories.
 Route::get('/event/categories', [EventCategoryController::class, 'getEventCategories']);
