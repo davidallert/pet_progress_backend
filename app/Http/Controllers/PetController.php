@@ -7,7 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Pet;
-// use App\Http\Resources\PetResource;
+use App\Http\Resources\PetResource;
 
 class PetController extends Controller
 {
@@ -20,12 +20,22 @@ class PetController extends Controller
       try {
         $pet = Pet::where('id', $validatedInput['id'])->first();
 
-        return response()->json($pet, 200);
+        $pet->load([
+          'species',
+          'events' => function ($query) {
+            $query->with('eventCategory')->orderByDesc('date');
+          },
+        ]);
+
+        return response()->json(
+            new PetResource($pet)
+        );
+
       } catch (\Illuminate\Validation\ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
       } catch (\Exception $e) {
           return response()->json(['error' => 'Something went wrong'], 500);
-          // return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+          // return response()->json(['error' => $e->getMessage(), 500);
       }
     }
 

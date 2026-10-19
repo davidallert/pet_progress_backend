@@ -34,7 +34,7 @@ Route::middleware(['auth:sanctum'])->post('/add/pet', [PetController::class, 'ad
 Route::middleware(['auth:sanctum'])->post('/remove/pet', [PetController::class, 'removePet']);
 Route::middleware(['auth:sanctum'])->post('/upsert/pet', [PetController::class, 'upsertPets']);
 Route::middleware(['auth:sanctum'])->post('/update/pet/image', [PetController::class, 'updateImage']);
-Route::get('/pet/get', [PetController::class, 'getPet']);
+Route::get('/pet', [PetController::class, 'getPet']);
 
 // Species
 Route::get('/species', [SpeciesController::class, 'getSpecies']);
