@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
+use Exception;
 use App\Models\Pet;
 use App\Http\Resources\PetResource;
 
@@ -31,45 +32,43 @@ class PetController extends Controller
             new PetResource($pet)
         );
 
-      } catch (\Illuminate\Validation\ValidationException $e) {
+      } catch (ValidationException $e) {
           return response()->json(['error' => $e->errors()], 422);
-      } catch (\Exception $e) {
+      } catch (Exception $e) {
           return response()->json(['error' => 'Something went wrong'], 500);
           // return response()->json(['error' => $e->getMessage(), 500);
       }
     }
 
-    public function updateImage(Request $request): JsonResponse 
+    public function updateImage(Request $request): JsonResponse
     {
-      try {
-        $validatedInput = $request->validate([
-          'id' => 'required|integer',
-          'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
-        ]);
+      $validatedInput = $request->validate([
+        'id' => 'required|integer',
+        'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
+      ]);
 
-        if (!Storage::disk('public')->exists('images')) {
-          Storage::disk('public')->makeDirectory('images');
-        }
+      $pet = $request->user()->pets()->findOrFail($validatedInput['id']); // Ensure the pet belongs to the authenticated user.
 
-        $prevPath = Pet::where('id', $validatedInput['id'])->value('image_path');
-
-        $imagePath = $request->file('image')->store('images', 'public');
-
-        Pet::where('id', $validatedInput['id'])->update(['image_path' => $imagePath]);
-
-        if ($prevPath) {
-          Storage::disk('public')->delete($prevPath);
-        }
-
-        $imageUrl = asset(Storage::url($imagePath));
-
-        return response()->json(['message' => 'Image was updated.', 'imageUrl' => $imageUrl], 201);
-      } catch (\Illuminate\Validation\ValidationException $e) {
-          return response()->json(['error' => $e->errors()], 422);
-      } catch (\Exception $e) {
-          return response()->json(['error' => 'Something went wrong'], 500);
-          // return response()->json(['error' => ['Something went wrong], 'details' => $e->getMessage()], 500);
+      if (!Storage::disk('public')->exists('images')) {
+        Storage::disk('public')->makeDirectory('images');
       }
+
+      $prevPath = $pet->image_path;
+
+      $imagePath = $validatedInput['image']->store('images', 'public');
+
+      $pet->update(['image_path' => $imagePath]);
+
+      if ($prevPath) {
+        Storage::disk('public')->delete($prevPath);
+      }
+
+      $imageUrl = asset(Storage::url($imagePath));
+
+      return response()->json([
+          'message' => 'Image was updated.',
+          'imageUrl' => $imageUrl
+        ], 200);
     }
 
     /**
@@ -77,48 +76,42 @@ class PetController extends Controller
      */
     public function addPet(Request $request): JsonResponse
     {
-      try {
-        $validatedInput = $request->validate([
-          'user_id' => 'required|integer',
-          'name' => 'required|string|max:255',
-          'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
-          'species_id' => 'required|integer',
-          'breed' => 'nullable|max:255',
-          'birthday' => 'nullable|date',
-        ]);
+      $validatedInput = $request->validate([
+        'name' => 'required|string|max:255',
+        'image' => 'required|image|mimes:jpg,jpeg,png,webp|max:10240',
+        'species_id' => 'required|integer',
+        'breed' => 'nullable|max:255',
+        'birthday' => 'nullable|date',
+      ],
+      [],
+      [
+        'species_id' => 'species',
+      ]);
 
-        if (!Storage::disk('public')->exists('images')) {
-            Storage::disk('public')->makeDirectory('images');
-        }
-
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-          $imagePath = $request->file('image')->store('images', 'public');
-        }
-
-        // New version with Eloquent and Pet model.
-        // Using Mass assignment. Can be risky if $fillable in the Pet model doesn't exist.
-        Pet::create([
-          'user_id' => $validatedInput['user_id'],
-          'name' => $validatedInput['name'],
-          'image_path' => $imagePath,
-          'species_id' => $validatedInput['species_id'],
-          'breed' => $validatedInput['breed'],
-          'birthday' => $validatedInput['birthday'],
-        ],
-        [],
-        [
-          'species_id' => 'species',
-        ]
-        );
-
-        return response()->json(['message' => 'Pet was added.'], 201);
-      } catch (\Illuminate\Validation\ValidationException $e) {
-          return response()->json(['error' => $e->errors()], 422);
-      } catch (\Exception $e) {
-          return response()->json(['error' => 'Something went wrong'], 500);
-          // return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
+      if (!Storage::disk('public')->exists('images')) {
+          Storage::disk('public')->makeDirectory('images');
       }
+
+      $imagePath = null;
+      if ($request->hasFile('image')) {
+        $imagePath = $request->file('image')->store('images', 'public');
+      }
+
+      $pet = $request->user()->pets();
+
+      // New version with Eloquent and Pet model.
+      // Using Mass assignment. Can be risky if $fillable in the Pet model doesn't exist.
+      $pet::create([
+        'name' => $validatedInput['name'],
+        'image_path' => $imagePath,
+        'species_id' => $validatedInput['species_id'],
+        'breed' => $validatedInput['breed'],
+        'birthday' => $validatedInput['birthday'],
+      ]);
+
+      return response()->json([
+        'message' => 'Pet was added.'
+        ], 201); // 201 is for creation.
     }
 
     public function removePet(Request $request): JsonResponse
