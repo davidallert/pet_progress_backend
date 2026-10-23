@@ -29,14 +29,25 @@ class UserController extends Controller
     {
       $user = auth()->user();
 
+      $petId = $request->query('pet_id');
       $eventLimit = $request->query('event_limit');
 
       $user->load([
-        'pets.species',
-        'pets.events' => function ($query) use ($eventLimit) {
-          $query->with('eventCategory')->orderByDesc('date');
-          
-          if ($eventLimit) $query->limit($eventLimit);
+        'pets' => function ($query) use ($petId, $eventLimit) {
+          if ($petId) {
+            $query->whereKey($petId);
+          }
+
+          $query->with([
+            'species',
+            'events' => function ($query) use ($eventLimit) {
+              $query->with('eventCategory')->orderByDesc('date');
+
+              if ($eventLimit) {
+                $query->limit($eventLimit);
+              }
+            },
+          ]);
         },
       ]);
 

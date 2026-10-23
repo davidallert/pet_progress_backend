@@ -101,7 +101,7 @@ class PetController extends Controller
 
       // New version with Eloquent and Pet model.
       // Using Mass assignment. Can be risky if $fillable in the Pet model doesn't exist.
-      $pet::create([
+      $pet->create([
         'name' => $validatedInput['name'],
         'image_path' => $imagePath,
         'species_id' => $validatedInput['species_id'],
@@ -116,61 +116,75 @@ class PetController extends Controller
 
     public function removePet(Request $request): JsonResponse
     {
-      try {
-        $validatedInput = $request->validate([
-          'id' => 'required|integer',
-        ]);
+      $validatedInput = $request->validate([
+        'id' => 'required|integer',
+      ]);
 
-        $imagePath = Pet::where('id', $validatedInput['id'])->value('image_path');
+      $pet = $request->user()->pets()->findOrFail($validatedInput['id']);
 
-        Pet::destroy($validatedInput['id']);
+      $imagePath = $pet->image_path;
 
-        if ($imagePath) {
-          Storage::disk('public')->delete($imagePath);
-        }
+      $pet->delete();
 
-        return response()->json(['message' => 'Pet was removed.'], 201);
-      } catch (\Illuminate\Validation\ValidationException $e) {
-          return response()->json(['error' => $e->errors()], 422);
-      } catch (\Exception $e) {
-          return response()->json(['error' => 'Something went wrong'], 500);
-          // return response()->json(['error' => 'Operation failed', 'details' => $e->getMessage()], 500);
-      } 
+      if ($imagePath) {
+        Storage::disk('public')->delete($imagePath);
+      }
+
+      return response()->json([
+        'message' => 'Pet was removed.'
+        ], 200);
     }
 
     public function upsertPets(Request $request): JsonResponse
     {
-      try {
-        $validatedInput = $request->validate([
-          'pets' => 'required|array',
-          'pets.*.id' => 'required|integer',
-          'pets.*.user_id' => 'required|integer',
-          'pets.*.name' => 'required|string|max:255',
-          'pets.*.species_id' => 'required|integer',
-          'pets.*.breed' => 'nullable|max:255',
-          'pets.*.birthday' => 'nullable|date',
-        ],
-        [],
-        // Custom field names, i.e. "name" is displayed instead of "pet.0.name".
-        [
-          'pets.*.name' => 'name',
-          'pets.*.species_id' => 'species',
-          'pets.*.breed' => 'breed',
-          'pets.*.birthday' => 'birthday',
-        ]
-        );
+      $validatedInput = $request->validate([
+        'pets' => 'required|array',
+        'pets.*.id' => 'required|integer',
+        'pets.*.name' => 'required|string|max:255',
+        'pets.*.species_id' => 'required|integer',
+        'pets.*.breed' => 'nullable|max:255',
+        'pets.*.birthday' => 'nullable|date',
+      ],
+      [],
+      // Custom field names, i.e. "name" is displayed instead of "pet.0.name".
+      [
+        'pets.*.name' => 'name',
+        'pets.*.species_id' => 'species',
+        'pets.*.breed' => 'breed',
+        'pets.*.birthday' => 'birthday',
+      ]
+      );
 
-        // 'pets.*.birthday' => 'required|date' translates to:
-        // "For the array named pets, go through every single object inside it, and for each one, validate that its birthday key exists and contains a valid date."
+      $user = $request->user();
+      $ids = collect($validatedInput['pets'])->pluck('id')->unique();
 
-        Pet::upsert($validatedInput['pets'], uniqueBy: ['id'], update: ['name', 'species_id', 'breed', 'birthday']);
+      $ownedIds = $user->pets()
+          ->whereIn('id', $ids)
+          ->pluck('id');
 
-        return response()->json(['message' => 'Pets were updated.'], 201);
-      } catch (\Illuminate\Validation\ValidationException $e) {
-          return response()->json(['error' => $e->errors()], 422);
-      } catch (\Exception $e) {
-          return response()->json(['error' => 'Something went wrong'], 500);
-          //return response()->json(['error' => $e->getMessage()], 500); // For debugging. May include sensitive information.
+      if ($ownedIds->count() !== $ids->count()) {
+          abort(404); // At least one ID is missing or belongs to someone else.
       }
+
+      $rows = collect($validatedInput['pets'])->map(fn ($pet) => [
+          'id' => $pet['id'],
+          'user_id' => $request->user()->id,
+          'name' => $pet['name'],
+          'species_id' => $pet['species_id'],
+          'breed' => $pet['breed'] ?? null,
+          'birthday' => $pet['birthday'] ?? null,
+      ])->all();
+
+      // 'pets.*.birthday' => 'required|date' translates to:
+      // "For the array named pets, go through every single object inside it, and for each one, validate that its birthday key exists and contains a valid date."
+
+      Pet::upsert($rows, uniqueBy: ['id'], update: ['name', 'species_id', 'breed', 'birthday']);
+
+      return response()->json([
+        'message' => 'Pets were updated.'
+        ], 200);
     }
 }
+
+
+
