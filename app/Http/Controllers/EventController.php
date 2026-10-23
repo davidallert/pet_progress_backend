@@ -50,23 +50,23 @@ class EventController extends Controller
 
     public function removeEvent(Request $request): JsonResponse
     {
-        $validatedInput = $request->validate([
-          'id' => 'required|integer',
-          'pet_id' => 'required|integer',
-        ]);
+      $validatedInput = $request->validate([
+        'id' => 'required|integer',
+        'pet_id' => 'required|integer',
+      ]);
 
-        $pet = $request->user()->pets()->findOrFail($validatedInput['pet_id']);
-        $event = $pet->events()->findOrFail($validatedInput['id']);
+      $pet = $request->user()->pets()->findOrFail($validatedInput['pet_id']);
+      $event = $pet->events()->findOrFail($validatedInput['id']);
 
-        $imagePath = Event::where('id', $validatedInput['id'])->value('image_path');
+      $imagePath = Event::where('id', $validatedInput['id'])->value('image_path');
 
-        $event->delete();
+      $event->delete();
 
-        if ($imagePath) Storage::disk('public')->delete($imagePath);
+      if ($imagePath) Storage::disk('public')->delete($imagePath);
 
-        return response()->json([
-          'message' => 'Event was removed.'
-          ], 200);
+      return response()->json([
+        'message' => 'Event was removed.'
+        ], 200);
     }
 
     public function getEvents(Request $request): JsonResponse
