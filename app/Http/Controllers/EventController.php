@@ -48,27 +48,6 @@ class EventController extends Controller
         ], 201);
     }
 
-    public function removeEvent(Request $request): JsonResponse
-    {
-      $validatedInput = $request->validate([
-        'id' => 'required|integer',
-        'pet_id' => 'required|integer',
-      ]);
-
-      $pet = $request->user()->pets()->findOrFail($validatedInput['pet_id']);
-      $event = $pet->events()->findOrFail($validatedInput['id']);
-
-      $imagePath = Event::where('id', $validatedInput['id'])->value('image_path');
-
-      $event->delete();
-
-      if ($imagePath) Storage::disk('public')->delete($imagePath);
-
-      return response()->json([
-        'message' => 'Event was removed.'
-        ], 200);
-    }
-
     public function getEvents(Request $request): JsonResponse
     {
       $validatedInput = $request->validate([
@@ -83,6 +62,27 @@ class EventController extends Controller
         return response()->json(EventResource::collection($events), 200); // Using EventResource to change keys from snake_case to camelCase.
     }
 
+    public function removeEvent(Request $request): JsonResponse
+    {
+      $validatedInput = $request->validate([
+        'id' => 'required|integer',
+        'pet_id' => 'required|integer',
+      ]);
+
+      $pet = $request->user()->pets()->findOrFail($validatedInput['pet_id']);
+      $event = $pet->events()->findOrFail($validatedInput['id']);
+
+      $imagePath = $event->image_path;
+
+      $event->delete();
+
+      if ($imagePath) Storage::disk('public')->delete($imagePath);
+
+      return response()->json([
+        'message' => 'Event was removed.'
+        ], 200);
+    }
+
     public function upsertEvent(Request $request): JsonResponse
     {
       $validatedInput = $request->validate([
@@ -94,7 +94,6 @@ class EventController extends Controller
         'category_id' => 'nullable|string|max:255',
         'date' => 'nullable|date',
       ]);
-      
 
       $pet = $request->user()->pets()->findOrFail($validatedInput['pet_id']);
       $event = $pet->events()->findOrFail($validatedInput['id']);
@@ -102,6 +101,7 @@ class EventController extends Controller
       // Create new array to filter which fields should be included.
       $upsert = [
         'id' => $validatedInput['id'],
+        'pet_id' => $validatedInput['pet_id'],
         'title' => $validatedInput['title'],
         'description' => $validatedInput['description'] ?? null,
         'category_id' => $validatedInput['category_id'] ?? null,
