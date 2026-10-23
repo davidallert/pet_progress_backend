@@ -18,7 +18,7 @@ class Event extends Model
 
     public function belongsToPet()
     {
-        return $this->belongsTo(Pet::class);
+        return $this->belongsTo(Pet::class, 'pet_id');
     }
 
     public function eventCategory()

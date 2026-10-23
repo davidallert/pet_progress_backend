@@ -54,7 +54,7 @@ class EventController extends Controller
           'id' => 'required|integer',
         ]);
 
-        $pet = $request->user()->pets()->findOrFail($validatedInput['pet_id']);
+        $pet = $request->user()->pets()->findOrFail($validatedInput['id']);
         $event = $pet->events();
 
         $imagePath = Event::where('id', $validatedInput['id'])->value('image_path');

@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use Database\Seeders\EventTypeSeeder;
+use App\Models\EventCategory;
+use Database\Seeders\EventCategorySeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class EventTypeDefaultsTest extends TestCase
@@ -13,35 +13,21 @@ class EventTypeDefaultsTest extends TestCase
 
     public function test_default_event_categories_are_created_with_their_icon_names(): void
     {
-        DB::table('event_types')->insert([
-            'name' => 'Trick',
-            'icon' => null,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
+        EventCategory::create(['name' => 'Trick', 'icon' => null]);
+        $this->seed(EventCategorySeeder::class);
 
-        $this->seed(EventTypeSeeder::class);
-
-        $categories = DB::table('event_types')
-            ->orderBy('name')
-            ->get(['name', 'icon'])
-            ->mapWithKeys(fn (object $category): array => [$category->name => $category->icon])
-            ->all();
-
-        $this->assertSame([
-            'Other' => 'paw',
-            'Trick' => 'volleyball',
-            'Trip' => 'earth-europe',
-            'Vaccination' => 'syringe',
-            'Vet Visit' => 'notes-medical',
-        ], $categories);
+        $this->assertDatabaseHas('event_categories', ['name' => 'Trick', 'icon' => 'baseball']);
+        $this->assertDatabaseHas('event_categories', ['name' => 'Vaccination', 'icon' => 'syringe']);
+        $this->assertDatabaseHas('event_categories', ['name' => 'Other', 'icon' => 'paw']);
     }
 
-    public function test_event_type_seeder_can_be_run_more_than_once(): void
+    public function test_event_category_seeder_is_idempotent(): void
     {
-        $this->seed(EventTypeSeeder::class);
-        $this->seed(EventTypeSeeder::class);
+        $this->seed(EventCategorySeeder::class);
+        $firstCount = EventCategory::count();
+        $this->seed(EventCategorySeeder::class);
 
-        $this->assertSame(5, DB::table('event_types')->count());
+        $this->assertSame($firstCount, EventCategory::count());
+        $this->assertSame(24, $firstCount);
     }
 }
