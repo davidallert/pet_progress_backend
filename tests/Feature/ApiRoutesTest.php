@@ -231,7 +231,7 @@ class ApiRoutesTest extends TestCase
         $pet = $this->makePet($this->user);
         $event = $pet->events()->create(['title' => 'Remove me']);
 
-        $this->postJson('/event/remove', ['id' => $event->id, 'pet_id' => $pet->id])->assertOk();
+        $this->postJson('/event/remove', ['event_id' => $event->id, 'pet_id' => $pet->id])->assertOk();
         $this->assertDatabaseMissing('events', ['id' => $event->id]);
     }
 
