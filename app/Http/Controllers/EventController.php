@@ -51,14 +51,14 @@ class EventController extends Controller
     public function removeEvent(Request $request): JsonResponse
     {
         $validatedInput = $request->validate([
-          'event_id' => 'required|integer',
+          'id' => 'required|integer',
           'pet_id' => 'required|integer',
         ]);
 
         $pet = $request->user()->pets()->findOrFail($validatedInput['pet_id']);
-        $event = $pet->events()->findOrFail($validatedInput['event_id']);
+        $event = $pet->events()->findOrFail($validatedInput['id']);
 
-        $imagePath = Event::where('id', $validatedInput['event_id'])->value('image_path');
+        $imagePath = Event::where('id', $validatedInput['id'])->value('image_path');
 
         $event->delete();
 
@@ -94,9 +94,10 @@ class EventController extends Controller
         'category_id' => 'nullable|string|max:255',
         'date' => 'nullable|date',
       ]);
+      
 
       $pet = $request->user()->pets()->findOrFail($validatedInput['pet_id']);
-      $event = $pet->events();
+      $event = $pet->events()->findOrFail($validatedInput['id']);
 
       // Create new array to filter which fields should be included.
       $upsert = [
